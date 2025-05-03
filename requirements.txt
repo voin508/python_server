@@ -1,0 +1,28 @@
+connexion<3.0.0
+connexion[swagger-ui] >= 2.6.0
+python_dateutil == 2.6.0
+setuptools >= 21.0.0
+swagger-ui-bundle >= 0.0.2
+flask_sqlalchemy >= 2.4.1
+flask_prometheus_metrics == 1.0.0
+
+Flask~=2.2.5
+six~=1.17.0
+prometheus_client~=0.21.1
+Werkzeug~=2.2.3
+SQLAlchemy~=2.0.38
+
+python-logging-loki~=0.3.1
+pytz
+
+opentelemetry-api==1.31.1
+opentelemetry-exporter-otlp==1.31.1
+opentelemetry-exporter-otlp-proto-common==1.31.1
+opentelemetry-exporter-otlp-proto-grpc==1.31.1
+opentelemetry-exporter-otlp-proto-http==1.31.1
+opentelemetry-instrumentation==0.52b1
+opentelemetry-instrumentation-requests==0.52b1
+opentelemetry-proto==1.31.1
+opentelemetry-sdk==1.31.1
+opentelemetry-semantic-conventions==0.52b1
+opentelemetry-util-http==0.52b1

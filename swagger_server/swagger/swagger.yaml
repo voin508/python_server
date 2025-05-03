@@ -1,0 +1,205 @@
+openapi: 3.0.3
+info:
+  title: Складское управление API
+  description: API для управления товарами.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.2.0
+servers:
+- url: http://api.example.com/v1
+tags:
+- name: product
+  description: Operations related to products
+paths:
+  /products:
+    post:
+      tags:
+      - product
+      summary: Создать товар
+      description: Добавление нового товара в систему.
+      operationId: add_product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+        required: true
+      responses:
+        "201":
+          description: Товар успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Неверный входные данные
+      x-openapi-router-controller: swagger_server.controllers.product_controller
+  /products/{id}:
+    get:
+      tags:
+      - product
+      summary: Найти товар по ID
+      description: Получение информации о товаре по его ID.
+      operationId: get_product_by_id
+      parameters:
+      - name: id
+        in: path
+        description: ID товара
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Товар найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Товар не найден
+      x-openapi-router-controller: swagger_server.controllers.product_controller
+    put:
+      tags:
+      - product
+      summary: Обновить существующий товар
+      description: Обновление информации о товаре.
+      operationId: update_product
+      parameters:
+      - name: id
+        in: path
+        description: ID товара
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+        required: true
+      responses:
+        "200":
+          description: Товар обновлен
+        "400":
+          description: Неверный входные данные
+      x-openapi-router-controller: swagger_server.controllers.product_controller
+    delete:
+      tags:
+      - product
+      summary: Удалить товар
+      description: Удаление товара по ID.
+      operationId: delete_product
+      parameters:
+      - name: id
+        in: path
+        description: ID товара
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Товар успешно удален
+        "404":
+          description: Товар не найден
+      x-openapi-router-controller: swagger_server.controllers.product_controller
+  /products/search:
+    get:
+      tags:
+      - product
+      summary: Поиск товаров по категории
+      description: Поиск товаров только по категории.
+      operationId: search_products_by_category
+      parameters:
+      - name: category
+        in: query
+        description: Категория товара для поиска
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Список найденных товаров
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+                x-content-type: application/json
+        "404":
+          description: Товары не найдены
+      x-openapi-router-controller: swagger_server.controllers.product_controller
+  /products/categories:
+    get:
+      tags:
+      - product
+      summary: Получить все категории товаров
+      description: Получение списка всех уникальных категорий товаров.
+      operationId: get_all_categories
+      responses:
+        "200":
+          description: Список категорий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: "[\"Электроника\",\"Одежда\",\"Бытовая техника\"]"
+                x-content-type: application/json
+        "404":
+          description: Категории не найдены
+      x-openapi-router-controller: swagger_server.controllers.product_controller
+components:
+  schemas:
+    Product:
+      required:
+      - category
+      - name
+      - price
+      - quantity
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: Товар 1
+        quantity:
+          type: integer
+          example: 100
+        price:
+          type: number
+          format: float
+          example: 9.99
+        category:
+          type: string
+          example: Электроника
+        description:
+          type: string
+          example: Описание товара.
+        sku:
+          type: string
+          example: SKU-12345
+      example:
+        quantity: 100
+        price: 9.99
+        name: Товар 1
+        description: Описание товара.
+        id: "1"
+        category: Электроника
+        sku: SKU-12345
+

@@ -1,0 +1,68 @@
+services:
+  python_server:
+    build: .
+    ports:
+      - "5000:5000"
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # Используем gRPC порт (4317)
+      - OTEL_SERVICE_NAME=python_server
+    depends_on:
+      - loki
+      - tempo
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - python_server
+
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "3200:3200"  # HTTP порт для запросов
+      - "4317:4317"  # OTLP gRPC порт
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+    command: [ "-config.file=/etc/tempo.yaml" ]
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./logs:/var/log/python-app
+      - ./promtail-config.yaml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning  # Для автоматической настройки
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=tempoSearch,tempoServiceGraph
+    depends_on:
+      - loki
+      - tempo
+      - prometheus
+
+volumes:
+  loki-data:
+  grafana-data:
+  tempo-data:
