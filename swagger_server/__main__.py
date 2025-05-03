@@ -43,18 +43,21 @@ from swagger_server.models import Product
 
 
 def update_endpoint(endpoint, method):
-    match = re.match(r"^(.*)/(\d+)$", endpoint)  # Поиск числа в конце с помощью регулярного выражения
+    match = re.match(r"^(.*)/(\d+)$", endpoint)
     if match:
-        return match.group(1) + '/' + method  # Возвращаем часть строки до числа
+        return match.group(1) + '/' + method
     else:
         if method == 'GET':
             return endpoint + '/GET_ALL'
-        return endpoint + '/' + method  # Если число не найдено, возвращаем исходный endpoint
+        return endpoint + '/' + method
 
 
 # Создаем метрику запроса с метками для пути запроса и метода
-REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP Requests', ['endpoint', 'method'])
-product_creation_counter = Gauge('created_products', 'Total figures count in the database')
+REQUEST_COUNT = Counter('http_requests_total',
+                        'Total HTTP Requests',
+                        ['endpoint', 'method'])
+product_creation_counter = Gauge('created_products',
+                                 'Total figures count in the database')
 
 
 def track_requests(app):
@@ -82,7 +85,7 @@ def update_system_metrics(app):
     while True:
         with app.app_context():
             # Создаем трейс с тремя спанами
-            with tracer.start_as_current_span("system_metrics_update") as parent_span:  # Исправлено: используется 'parent_span'
+            with tracer.start_as_current_span("system_metrics_update") as parent_span:
                 # Первый спан - получение количества продуктов
                 with tracer.start_as_current_span("get_product_count"):
                     count = db.session.query(func.count(Product.id)).scalar()
@@ -100,7 +103,9 @@ def main():
     start_http_server(8000)
     app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = encoder.JSONEncoder
-    app.add_api('swagger.yaml', arguments={'title': 'Складское управление API'}, pythonic_params=True)
+    app.add_api('swagger.yaml',
+                arguments={'title': 'Складское управление API'},
+                pythonic_params=True)
 
     # Регистрируем middleware для отслеживания запросов
     track_requests(app.app)
@@ -115,7 +120,9 @@ def main():
     with app.app.app_context():
         db.create_all()
 
-    threading.Thread(target=update_system_metrics, args=(app.app,), daemon=True).start()
+    threading.Thread(target=update_system_metrics,
+                     args=(app.app,),
+                     daemon=True).start()
     app.run(port=5000)
 
 

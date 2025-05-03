@@ -3,12 +3,13 @@
 import connexion
 from flask import jsonify
 from swagger_server.database import db
-from swagger_server.models.product import Product  # Предполагая, что у вас есть модель Product
+from swagger_server.models.product import Product
 from swagger_server.logger import logger
 from opentelemetry import trace
 
 # Получаем трейсер
 tracer = trace.get_tracer(__name__)
+
 
 def add_product(body):
     """Создать товар"""

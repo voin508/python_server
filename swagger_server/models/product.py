@@ -3,6 +3,7 @@
 
 from swagger_server.database import db
 
+
 class Product(db.Model):
     __tablename__ = 'products'
 
@@ -14,7 +15,8 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=True)
     sku = db.Column(db.String(50), nullable=True)
 
-    def __init__(self, name, quantity, price, category, description, sku, id=None):
+    def __init__(self, name, quantity, price,
+                 category, description, sku, id=None):
         self.id = id
         self.name = name
         self.quantity = quantity
