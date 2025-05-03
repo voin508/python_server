@@ -1,3 +1,5 @@
+# swagger_server/logger.py
+
 import logging  # Импортируем модуль для логирования
 from logging_loki import LokiHandler  # Импортируем обработчик Loki
 
@@ -12,3 +14,5 @@ loki_handler = LokiHandler(
     version="1",
 )
 logger.addHandler(loki_handler)
+
+# Добавление новой строки в конце файла

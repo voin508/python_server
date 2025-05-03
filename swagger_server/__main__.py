@@ -82,7 +82,7 @@ def update_system_metrics(app):
     while True:
         with app.app_context():
             # Создаем трейс с тремя спанами
-            with tracer.start_as_current_span("system_metrics_update") as parent_span:
+            with tracer.start_as_current_span("system_metrics_update") as parent_span:  # Исправлено: используется 'parent_span'
                 # Первый спан - получение количества продуктов
                 with tracer.start_as_current_span("get_product_count"):
                     count = db.session.query(func.count(Product.id)).scalar()
