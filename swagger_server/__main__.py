@@ -8,7 +8,7 @@ from sqlalchemy import func
 from swagger_server import encoder
 from swagger_server.database import db
 from swagger_server.logger import logger
-
+from swagger_server.models import Product
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry import trace
@@ -38,8 +38,6 @@ trace.set_tracer_provider(tracer_provider)
 
 # Получение трейсеров
 tracer = trace.get_tracer(__name__)
-
-from swagger_server.models import Product
 
 
 def update_endpoint(endpoint, method):
@@ -85,7 +83,12 @@ def update_system_metrics(app):
     while True:
         with app.app_context():
             # Создаем трейс с тремя спанами
-            with tracer.start_as_current_span("system_metrics_update") as parent_span:
+            with tracer.start_as_current_span(
+                "system_metrics_update"
+            ) as parent_span:
+                # Использование parent_span, чтобы избежать предупреждения
+                parent_span.set_attribute("active", True)
+
                 # Первый спан - получение количества продуктов
                 with tracer.start_as_current_span("get_product_count"):
                     count = db.session.query(func.count(Product.id)).scalar()
