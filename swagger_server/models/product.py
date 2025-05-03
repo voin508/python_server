@@ -25,7 +25,6 @@ class Product(db.Model):
 
     @classmethod
     def from_dict(cls, dikt):
-
         return cls(
             id=dikt.get('id'),
             name=dikt.get('name'),
@@ -46,3 +45,5 @@ class Product(db.Model):
             'description': self.description,
             'sku': self.sku
         }
+
+# Добавление новой строки в конце файла
